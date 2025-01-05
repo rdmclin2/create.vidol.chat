@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import React from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import React from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import {
   Bot,
@@ -15,47 +15,41 @@ import {
   ChevronRight,
   ChevronFirst,
   ChevronLast,
-} from 'lucide-react';
-import { Button } from './ui/button';
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+} from "lucide-react";
+import { Button } from "./ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const routes = [
   {
-    label: '主页',
+    label: "主页",
     icon: Home,
-    href: '/',
+    href: "/",
   },
   {
-    label: '角色管理',
+    label: "角色管理",
     icon: Users,
     children: [
       {
-        label: '角色列表',
+        label: "角色列表",
         icon: Bot,
-        href: '/characters',
+        href: "/characters",
       },
       {
-        label: '创建角色',
+        label: "创建角色",
         icon: Plus,
-        href: '/create',
+        href: "/create",
       },
     ],
   },
   {
-    label: '对话',
+    label: "对话",
     icon: MessageSquare,
-    href: '/chat',
+    href: "/chat",
   },
   {
-    label: '设置',
+    label: "设置",
     icon: Settings,
-    href: '/settings',
+    href: "/settings",
   },
 ];
 
@@ -66,28 +60,27 @@ export default function Sidebar() {
   const [expanded, setExpanded] = React.useState(true);
 
   const toggleGroup = (label: string) => {
-    setOpenGroups(prev =>
+    setOpenGroups((prev) =>
       prev.includes(label)
-        ? prev.filter(item => item !== label)
+        ? prev.filter((item) => item !== label)
         : [...prev, label]
     );
   };
 
   const SidebarContent = () => (
     <div className="flex h-full flex-col gap-4">
-      <div className={cn(
-        "flex h-14 items-center border-b px-6",
-        !expanded && "justify-center px-2"
-      )}>
+      <div
+        className={cn(
+          "flex h-14 items-center border-b px-6",
+          !expanded && "justify-center px-2"
+        )}
+      >
         <Link href="/" className="flex items-center gap-2">
           <Bot className="h-6 w-6" />
           {expanded && <span className="font-bold">AI 角色</span>}
         </Link>
       </div>
-      <nav className={cn(
-        "flex-1 space-y-1",
-        expanded ? "px-3" : "px-2"
-      )}>
+      <nav className={cn("flex-1 space-y-1", expanded ? "px-3" : "px-2")}>
         {routes.map((route) => {
           if (route.children) {
             const isGroupOpen = openGroups.includes(route.label);
@@ -106,11 +99,11 @@ export default function Sidebar() {
                     {expanded && route.label}
                   </div>
                   {expanded && (
-                    <ChevronRight 
+                    <ChevronRight
                       className={cn(
                         "h-4 w-4 transition-transform",
                         isGroupOpen && "rotate-90"
-                      )} 
+                      )}
                     />
                   )}
                 </button>
@@ -158,14 +151,16 @@ export default function Sidebar() {
           );
         })}
       </nav>
-      <div className={cn(
-        "flex h-14 items-center border-t",
-        expanded ? "px-3" : "justify-center"
-      )}>
+      <div
+        className={cn(
+          "flex h-14 items-center border-t",
+          expanded ? "px-3" : "justify-center"
+        )}
+      >
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => setExpanded(prev => !prev)}
+          onClick={() => setExpanded((prev) => !prev)}
           className="h-8 w-8"
         >
           {expanded ? (
@@ -181,17 +176,23 @@ export default function Sidebar() {
   return (
     <>
       {/* Desktop Sidebar */}
-      <aside className={cn(
-        "sticky top-0 hidden h-screen border-r bg-background lg:block transition-all duration-300",
-        expanded ? "w-64" : "w-16"
-      )}>
+      <aside
+        className={cn(
+          "sticky top-0 hidden h-screen border-r bg-background lg:block transition-all duration-300",
+          expanded ? "w-64" : "w-16"
+        )}
+      >
         <SidebarContent />
       </aside>
 
       {/* Mobile Sidebar */}
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetTrigger asChild className="lg:hidden">
-          <Button variant="ghost" size="icon" className="fixed left-4 top-4 z-40">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="fixed left-4 top-4 z-40"
+          >
             <Menu className="h-5 w-5" />
             <span className="sr-only">Toggle Menu</span>
           </Button>

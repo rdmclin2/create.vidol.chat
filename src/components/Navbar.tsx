@@ -1,17 +1,11 @@
-'use client';
+"use client";
 
-import React from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import React from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import {
-  Bot,
-  Settings,
-  Plus,
-  Menu,
-  X,
-} from 'lucide-react';
-import { Button } from './ui/button';
+import { Bot, Settings, Plus, Menu } from "lucide-react";
+import { Button } from "./ui/button";
 import {
   Sheet,
   SheetContent,
@@ -22,20 +16,20 @@ import {
 
 const routes = [
   {
-    href: '/',
-    label: '角色列表',
-    icon: Bot
+    href: "/",
+    label: "角色列表",
+    icon: Bot,
   },
   {
-    href: '/create',
-    label: '创建角色',
-    icon: Plus
+    href: "/create",
+    label: "创建角色",
+    icon: Plus,
   },
   {
-    href: '/settings',
-    label: '设置',
-    icon: Settings
-  }
+    href: "/settings",
+    label: "设置",
+    icon: Settings,
+  },
 ];
 
 export default function Navbar() {
@@ -57,7 +51,9 @@ export default function Navbar() {
                 href={route.href}
                 className={cn(
                   "transition-colors hover:text-foreground/80",
-                  pathname === route.href ? "text-foreground" : "text-foreground/60"
+                  pathname === route.href
+                    ? "text-foreground"
+                    : "text-foreground/60"
                 )}
               >
                 <div className="flex items-center space-x-2">
@@ -92,7 +88,9 @@ export default function Navbar() {
                   href={route.href}
                   className={cn(
                     "flex items-center space-x-2 text-sm font-medium transition-colors hover:text-foreground/80",
-                    pathname === route.href ? "text-foreground" : "text-foreground/60"
+                    pathname === route.href
+                      ? "text-foreground"
+                      : "text-foreground/60"
                   )}
                   onClick={() => setIsOpen(false)}
                 >
