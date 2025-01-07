@@ -13,23 +13,26 @@ export default function CharacterForm({
   onUpdate 
 }: { 
   onUpdate?: (info: { 
-    name: string; 
-    avatarUrl: string; 
-    greeting: string; 
-    systemPrompt: string; 
+    name: string;
+    gender: string;
+    intro: string;
+    opening: string;
+    persona: string;
+    model: string;
   }) => void 
 }) {
   const { toast } = useToast();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [coverFile, setCoverFile] = useState<File | null>(null);
-  const [avatarFile, setAvatarFile] = useState<File | null>(null);
-  const [coverPreview, setCoverPreview] = useState<string>('');
-  const [avatarPreview, setAvatarPreview] = useState<string>('');
+  const [image, setImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>('');
   const [formData, setFormData] = useState({
     name: '',
-    greeting: '',
-    systemPrompt: '',
+    gender: 'male',
+    intro: '',
+    opening: '',
+    persona: '',
+    model: 'daily-chat',
   });
 
   // Update preview when form data changes
@@ -38,36 +41,28 @@ export default function CharacterForm({
     
     const timeoutId = setTimeout(() => {
       onUpdate({
-        name: formData.name,
-        avatarUrl: avatarPreview,
-        greeting: formData.greeting,
-        systemPrompt: formData.systemPrompt,
+        ...formData,
       });
     }, 100);
 
     return () => clearTimeout(timeoutId);
-  }, [formData.name, formData.greeting, formData.systemPrompt, avatarPreview, onUpdate]);
+  }, [formData, onUpdate]);
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'cover' | 'avatar') => {
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     // Create preview URL
     const url = URL.createObjectURL(file);
-    if (type === 'cover') {
-      setCoverFile(file);
-      setCoverPreview(url);
-    } else {
-      setAvatarFile(file);
-      setAvatarPreview(url);
-    }
+    setImage(file);
+    setImagePreview(url);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -78,8 +73,7 @@ export default function CharacterForm({
       const formData = new FormData(e.currentTarget);
       
       // Add files to form data if they exist
-      if (coverFile) formData.set('cover', coverFile);
-      if (avatarFile) formData.set('avatar', avatarFile);
+      if (image) formData.set('image', image);
 
       const response = await fetch('/api/characters', {
         method: 'POST',
@@ -112,151 +106,134 @@ export default function CharacterForm({
 
   return (
     <form onSubmit={handleSubmit}>
-      <Card className="w-full max-w-2xl mx-auto">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold tracking-tight">创建新角色</CardTitle>
-          <p className="text-sm text-muted-foreground">
-            创建一个新的 AI 角色，定制它的个性和能力
-          </p>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {/* 封面上传 */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium">角色封面</label>
-            <input
-              type="file"
-              className="hidden"
-              accept="image/*"
-              id="cover-upload"
-              name="cover"
-              onChange={(e) => handleFileChange(e, 'cover')}
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Input 
+              type="text"
+              name="name"
+              placeholder="Name your Talkie"
+              className="w-[180px] bg-background"
+              value={formData.name}
+              onChange={handleInputChange}
+              maxLength={18}
             />
-            <label
-              htmlFor="cover-upload"
-              className="flex items-center justify-center w-full h-48 rounded-lg border-2 border-dashed border-muted bg-muted/5 cursor-pointer hover:bg-muted/10 transition-colors relative overflow-hidden"
-            >
-              {coverPreview ? (
-                <img
-                  src={coverPreview}
-                  alt="Cover preview"
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
-              ) : (
-                <div className="text-center">
-                  <Upload className="w-8 h-8 mx-auto text-muted-foreground" />
-                  <div className="mt-2">
-                    <span className="text-sm text-primary">上传封面图片</span>
-                  </div>
-                </div>
-              )}
-            </label>
+            <div className="text-xs text-muted-foreground">{formData.name.length}/18</div>
           </div>
+          <div className="flex items-center gap-2">
+            <span className="text-sm">AI Writer</span>
+          </div>
+        </div>
 
-          {/* 头像上传 */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium">角色头像</label>
-            <div className="flex items-center space-x-4">
-              <input
-                type="file"
-                className="hidden"
-                accept="image/*"
-                id="avatar-upload"
-                name="avatar"
-                onChange={(e) => handleFileChange(e, 'avatar')}
-              />
-              <label
-                htmlFor="avatar-upload"
-                className="w-24 h-24 rounded-full border-2 border-dashed border-muted bg-muted/5 flex items-center justify-center cursor-pointer hover:bg-muted/10 transition-colors relative overflow-hidden"
-              >
-                {avatarPreview ? (
-                  <img
-                    src={avatarPreview}
-                    alt="Avatar preview"
-                    className="absolute inset-0 w-full h-full object-cover"
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <label className="text-sm font-medium">Gender</label>
+            <div className="flex items-center gap-2">
+              {['Male', 'Female', 'Non-Binary'].map((gender) => (
+                <label key={gender} className="flex items-center gap-1">
+                  <input
+                    type="radio"
+                    name="gender"
+                    value={gender.toLowerCase()}
+                    checked={formData.gender === gender.toLowerCase()}
+                    onChange={handleInputChange}
+                    className="w-4 h-4"
                   />
-                ) : (
-                  <span className="text-sm text-primary">上传头像</span>
-                )}
-              </label>
+                  <span className="text-sm">{gender}</span>
+                </label>
+              ))}
             </div>
           </div>
 
-          {/* 名称 */}
           <div className="space-y-2">
-            <label htmlFor="name" className="text-sm font-medium">
-              角色名称
-            </label>
-            <Input
-              id="name"
-              name="name"
-              placeholder="输入角色名称"
-              className="bg-background"
-              required
-              value={formData.name}
-              onChange={handleInputChange}
-            />
-          </div>
-
-          {/* 描述 */}
-          <div className="space-y-2">
-            <label htmlFor="description" className="text-sm font-medium">
-              角色描述
+            <label className="text-sm font-medium">
+              Intro (Visible to other users)
             </label>
             <Textarea
-              id="description"
-              name="description"
-              placeholder="描述这个 AI 角色的特点和能力"
+              name="intro"
+              placeholder="Briefly outline Talkie's background, identity, and experiences, highlighting its unique traits and narrative"
               rows={3}
-              className="bg-background"
-              required
+              className="bg-background resize-none"
+              value={formData.intro}
+              onChange={handleInputChange}
+              maxLength={2000}
             />
+            <div className="text-xs text-muted-foreground text-right">{formData.intro.length}/2000</div>
           </div>
 
-          {/* 开场白 */}
           <div className="space-y-2">
-            <label htmlFor="greeting" className="text-sm font-medium">
-              开场白
-            </label>
+            <label className="text-sm font-medium">Opening</label>
             <Textarea
-              id="greeting"
-              name="greeting"
-              placeholder="设置角色的开场白"
+              name="opening"
+              placeholder="The opening starts the conversation and sets the tone"
               rows={2}
-              className="bg-background"
-              required
-              value={formData.greeting}
+              className="bg-background resize-none"
+              value={formData.opening}
               onChange={handleInputChange}
+              maxLength={500}
             />
+            <div className="text-xs text-muted-foreground text-right">{formData.opening.length}/500</div>
           </div>
 
-          {/* 系统 Prompt */}
           <div className="space-y-2">
-            <label htmlFor="systemPrompt" className="text-sm font-medium">
-              系统 Prompt
-            </label>
+            <label className="text-sm font-medium">Persona & Prompt (Private)</label>
             <Textarea
-              id="systemPrompt"
-              name="systemPrompt"
-              placeholder="输入系统 Prompt，用于定义角色的行为和限制"
+              name="persona"
+              placeholder="Provide detailed information about Talkie's chat persona, role, chat style, restrictions, and other relevant characteristics to create a complete character setup."
               rows={6}
-              className="font-mono text-sm bg-background"
-              required
-              value={formData.systemPrompt}
+              className="font-mono text-sm bg-background resize-none"
+              value={formData.persona}
               onChange={handleInputChange}
+              maxLength={2000}
             />
+            <div className="text-xs text-muted-foreground text-right">{formData.persona.length}/2000</div>
+            <p className="text-xs text-muted-foreground">
+              You can preview and test your talkie in the preview console on the right. Modify until satisfied.
+            </p>
           </div>
+        </div>
 
-          <div className="flex justify-end">
-            <Button 
-              type="submit"
-              size="lg"
-              disabled={isLoading}
-            >
-              {isLoading ? '创建中...' : '创建角色'}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Image</label>
+          <input
+            type="file"
+            className="hidden"
+            accept="image/*"
+            id="image-upload"
+            name="image"
+            onChange={handleImageChange}
+          />
+          <label
+            htmlFor="image-upload"
+            className="flex items-center justify-center w-full aspect-video rounded-lg border-2 border-dashed border-muted bg-muted/5 cursor-pointer hover:bg-muted/10 transition-colors relative overflow-hidden"
+          >
+            {imagePreview ? (
+              <img
+                src={imagePreview}
+                alt="Image preview"
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+            ) : (
+              <div className="text-center">
+                <Upload className="w-8 h-8 mx-auto text-muted-foreground" />
+                <div className="mt-2">
+                  <span className="text-sm text-primary">Add image to make your talkie more engaging</span>
+                </div>
+              </div>
+            )}
+          </label>
+        </div>
+
+        <div className="flex justify-end">
+          <Button 
+            type="submit"
+            size="lg"
+            disabled={isLoading}
+          >
+            {isLoading ? '创建中...' : '创建角色'}
+          </Button>
+        </div>
+      </div>
     </form>
   );
 }

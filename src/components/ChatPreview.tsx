@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Textarea } from "@/components/ui/textarea";
 import { Send } from "lucide-react";
 
@@ -12,123 +13,109 @@ interface Message {
 }
 
 interface ChatPreviewProps {
-  characterName: string;
-  avatarUrl?: string;
-  greeting?: string;
-  systemPrompt?: string;
+  name: string;
+  gender: string;
+  intro: string;
+  opening: string;
+  persona: string;
+  model: string;
 }
 
 export default function ChatPreview({
-  characterName,
-  avatarUrl,
-  greeting = '你好！很高兴见到你。',
-  systemPrompt,
+  name = '',
+  gender = 'male',
+  intro = '',
+  opening = 'Hi! Nice to meet you.',
+  persona = '',
+  model = 'daily-chat',
 }: ChatPreviewProps) {
-  const [messages, setMessages] = React.useState<Message[]>([]);
-  const [input, setInput] = React.useState('');
-  const messagesEndRef = React.useRef<HTMLDivElement>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [input, setInput] = useState('');
 
-  React.useEffect(() => {
-    if (!greeting) return;
-    
-    // Reset chat when character info changes
+  useEffect(() => {
+    // Reset chat when opening message changes
     setMessages([
       {
         role: 'assistant',
-        content: greeting,
+        content: opening || 'Hi! Nice to meet you.',
       },
     ]);
-  }, [greeting]);
+  }, [opening]);
 
-  const scrollToBottom = React.useCallback(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, []);
-
-  React.useEffect(() => {
-    scrollToBottom();
-  }, [messages.length, scrollToBottom]);
-
-  const handleSend = () => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
     if (!input.trim()) return;
 
-    const newMessages = [
-      ...messages,
+    // Add user message
+    setMessages(prev => [
+      ...prev,
       { role: 'user', content: input },
-      // Simulate AI response
-      { 
-        role: 'assistant', 
-        content: '这是一条模拟的回复消息。在实际对话中，这里会是基于你的系统 Prompt 生成的回复。' 
-      },
-    ];
+    ]);
 
-    setMessages(newMessages);
+    // Clear input
     setInput('');
+
+    // Simulate AI response after a short delay
+    setTimeout(() => {
+      setMessages(prev => [
+        ...prev,
+        { 
+          role: 'assistant', 
+          content: 'This is a preview mode. The actual responses will be generated based on the character\'s persona and chat model.' 
+        },
+      ]);
+    }, 1000);
   };
 
   return (
-    <Card className="w-full h-[calc(100vh-8rem)] flex flex-col">
-      <CardHeader>
-        <CardTitle className="text-xl">对话预览</CardTitle>
-      </CardHeader>
-      <CardContent className="flex-1 flex flex-col">
-        <ScrollArea className="flex-1 pr-4">
-          <div className="space-y-4">
-            {messages.map((message, index) => (
+    <div className="flex flex-col h-full rounded-lg border bg-card text-card-foreground shadow-sm">
+      <div className="flex flex-col flex-1 p-4">
+        <div className="flex-1 space-y-4">
+          {messages.map((message, i) => (
+            <div
+              key={i}
+              className={`flex items-start gap-3 ${
+                message.role === 'assistant' ? 'flex-row' : 'flex-row-reverse'
+              }`}
+            >
+              {message.role === 'assistant' && (
+                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                  {gender === 'male' ? '👨' : gender === 'female' ? '👩' : '🧑'}
+                </div>
+              )}
               <div
-                key={index}
-                className={`flex ${
-                  message.role === 'user' ? 'justify-end' : 'justify-start'
+                className={`rounded-lg px-3 py-2 max-w-[80%] ${
+                  message.role === 'assistant'
+                    ? 'bg-muted'
+                    : 'bg-primary text-primary-foreground'
                 }`}
               >
-                <div
-                  className={`flex items-start gap-2 max-w-[80%] ${
-                    message.role === 'user' ? 'flex-row-reverse' : 'flex-row'
-                  }`}
-                >
-                  {message.role === 'assistant' && (
-                    <Avatar>
-                      <AvatarImage src={avatarUrl} />
-                      <AvatarFallback>{characterName ? characterName[0] : '?'}</AvatarFallback>
-                    </Avatar>
-                  )}
-                  <div
-                    className={`rounded-lg px-4 py-2 ${
-                      message.role === 'user'
-                        ? 'bg-primary text-primary-foreground'
-                        : 'bg-muted'
-                    }`}
-                  >
-                    <p className="text-sm">{message.content}</p>
-                  </div>
-                </div>
+                {message.content}
               </div>
-            ))}
-            <div ref={messagesEndRef} />
-          </div>
-        </ScrollArea>
+              {message.role === 'user' && (
+                <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground">
+                  👤
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
 
-        <div className="mt-4 flex gap-2">
-          <Textarea
+      <form onSubmit={handleSubmit} className="p-4 border-t">
+        <div className="flex gap-2">
+          <Input
+            type="text"
+            placeholder="Please enter your nickname, bio, and opening line to start a conversation"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="输入消息..."
-            className="min-h-[80px]"
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                handleSend();
-              }
-            }}
+            className="flex-1"
           />
-          <Button
-            onClick={handleSend}
-            className="px-3"
-            disabled={!input.trim()}
-          >
-            <Send className="h-4 w-4" />
+          <Button type="submit" size="icon">
+            <Send className="w-4 h-4" />
           </Button>
         </div>
-      </CardContent>
-    </Card>
+      </form>
+    </div>
   );
 }
