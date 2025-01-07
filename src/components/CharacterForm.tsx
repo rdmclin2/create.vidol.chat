@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,7 +9,16 @@ import { Upload } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from 'next/navigation';
 
-export default function CharacterForm() {
+export default function CharacterForm({ 
+  onUpdate 
+}: { 
+  onUpdate?: (info: { 
+    name: string; 
+    avatarUrl: string; 
+    greeting: string; 
+    systemPrompt: string; 
+  }) => void 
+}) {
   const { toast } = useToast();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -17,6 +26,34 @@ export default function CharacterForm() {
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [coverPreview, setCoverPreview] = useState<string>('');
   const [avatarPreview, setAvatarPreview] = useState<string>('');
+  const [formData, setFormData] = useState({
+    name: '',
+    greeting: '',
+    systemPrompt: '',
+  });
+
+  // Update preview when form data changes
+  useEffect(() => {
+    if (!onUpdate) return;
+    
+    const timeoutId = setTimeout(() => {
+      onUpdate({
+        name: formData.name,
+        avatarUrl: avatarPreview,
+        greeting: formData.greeting,
+        systemPrompt: formData.systemPrompt,
+      });
+    }, 100);
+
+    return () => clearTimeout(timeoutId);
+  }, [formData.name, formData.greeting, formData.systemPrompt, avatarPreview, onUpdate]);
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'cover' | 'avatar') => {
     const file = e.target.files?.[0];
@@ -155,6 +192,8 @@ export default function CharacterForm() {
               placeholder="输入角色名称"
               className="bg-background"
               required
+              value={formData.name}
+              onChange={handleInputChange}
             />
           </div>
 
@@ -185,6 +224,8 @@ export default function CharacterForm() {
               rows={2}
               className="bg-background"
               required
+              value={formData.greeting}
+              onChange={handleInputChange}
             />
           </div>
 
@@ -200,6 +241,8 @@ export default function CharacterForm() {
               rows={6}
               className="font-mono text-sm bg-background"
               required
+              value={formData.systemPrompt}
+              onChange={handleInputChange}
             />
           </div>
 
