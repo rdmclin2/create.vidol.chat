@@ -7,7 +7,7 @@ export default function Home() {
       {/* Hero Section */}
       <div className="container mx-auto px-4 py-16">
         <div className="text-center space-y-8">
-          <h1 className="text-5xl font-bold text-foreground">欢迎来到 AI 角色创建平台</h1>
+          <h1 className="text-5xl font-bold text-foreground">欢迎来到角色梦工厂</h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             在这里，你可以创建和管理你的 AI 角色，为每个角色定制独特的个性和行为特征。
             打造属于你的专属 AI 助手，让交互更加个性化和有趣。

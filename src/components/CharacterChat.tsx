@@ -1,7 +1,12 @@
 'use client';
 
 import React from 'react';
-import Avatar from './Avatar';
+import { Character } from '@/lib/characters';
+import Image from 'next/image';
+import { Button } from './ui/button';
+import { Input } from './ui/input';
+import { cn } from '@/lib/utils';
+import { Send } from 'lucide-react';
 
 interface Message {
   id: number;
@@ -10,25 +15,17 @@ interface Message {
   timestamp: Date;
 }
 
-interface Character {
-  name: string;
-  emoji: string;
-  greeting: string;
-}
-
-// 格式化时间的辅助函数
 const formatTime = (date: Date) => {
   const hours = date.getHours().toString().padStart(2, '0');
   const minutes = date.getMinutes().toString().padStart(2, '0');
-  const seconds = date.getSeconds().toString().padStart(2, '0');
-  return `${hours}:${minutes}:${seconds}`;
+  return `${hours}:${minutes}`;
 };
 
 export default function CharacterChat({ character }: { character: Character }) {
   const [messages, setMessages] = React.useState<Message[]>([
     {
       id: 1,
-      content: character.greeting,
+      content: `你好！我是${character.name}。`,
       sender: 'ai',
       timestamp: new Date(),
     },
@@ -48,11 +45,10 @@ export default function CharacterChat({ character }: { character: Character }) {
     e.preventDefault();
     if (!newMessage.trim()) return;
 
-    // 添加用户消息
-    const userMessage: Message = {
+    const userMessage = {
       id: messages.length + 1,
       content: newMessage,
-      sender: 'user',
+      sender: 'user' as const,
       timestamp: new Date(),
     };
 
@@ -61,10 +57,10 @@ export default function CharacterChat({ character }: { character: Character }) {
 
     // 模拟AI回复
     setTimeout(() => {
-      const aiMessage: Message = {
+      const aiMessage = {
         id: messages.length + 2,
-        content: '这是一个模拟的AI回复。在实际应用中，这里应该调用AI接口获取回复。',
-        sender: 'ai',
+        content: '这是一个模拟的回复消息。实际应用中，这里会连接到AI服务。',
+        sender: 'ai' as const,
         timestamp: new Date(),
       };
       setMessages(prev => [...prev, aiMessage]);
@@ -72,37 +68,54 @@ export default function CharacterChat({ character }: { character: Character }) {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md flex flex-col h-[600px]">
+    <div className="flex flex-col h-full bg-card rounded-lg">
       {/* 聊天记录 */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((message) => (
           <div
             key={message.id}
-            className={`flex ${
-              message.sender === 'user' ? 'justify-end' : 'justify-start'
-            }`}
+            className={cn(
+              "flex items-start gap-3 max-w-[80%]",
+              message.sender === 'user' ? "ml-auto" : ""
+            )}
           >
+            {message.sender === 'ai' && (
+              <div className="relative w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
+                <Image
+                  src={character.image}
+                  alt={character.name}
+                  fill
+                  className="object-cover"
+                />
+              </div>
+            )}
             <div
-              className={`flex items-start space-x-2 max-w-[70%] ${
-                message.sender === 'user' ? 'flex-row-reverse space-x-reverse' : ''
-              }`}
-            >
-              {message.sender === 'ai' && (
-                <Avatar emoji={character.emoji} size="sm" />
+              className={cn(
+                "rounded-lg p-3",
+                message.sender === 'user'
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-muted"
               )}
+            >
+              <p className="text-sm">{message.content}</p>
               <div
-                className={`rounded-lg p-3 ${
+                className={cn(
+                  "text-xs mt-1",
                   message.sender === 'user'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100'
-                }`}
+                    ? "text-primary-foreground/70"
+                    : "text-muted-foreground"
+                )}
               >
-                <p className="text-sm">{message.content}</p>
-                <p className="text-xs mt-1 opacity-70">
-                  {formatTime(message.timestamp)}
-                </p>
+                {formatTime(message.timestamp)}
               </div>
             </div>
+            {message.sender === 'user' && (
+              <div className="relative w-8 h-8 rounded-full overflow-hidden bg-primary flex-shrink-0">
+                <div className="absolute inset-0 flex items-center justify-center text-primary-foreground text-sm font-medium">
+                  你
+                </div>
+              </div>
+            )}
           </div>
         ))}
         <div ref={messagesEndRef} />
@@ -110,20 +123,16 @@ export default function CharacterChat({ character }: { character: Character }) {
 
       {/* 输入框 */}
       <form onSubmit={handleSendMessage} className="p-4 border-t">
-        <div className="flex space-x-2">
-          <input
-            type="text"
+        <div className="flex gap-2">
+          <Input
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             placeholder="输入消息..."
-            className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1"
           />
-          <button
-            type="submit"
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition-colors"
-          >
-            发送
-          </button>
+          <Button type="submit" size="icon">
+            <Send className="h-4 w-4" />
+          </Button>
         </div>
       </form>
     </div>

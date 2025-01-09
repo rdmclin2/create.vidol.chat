@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Character } from '@/lib/characters';
 import Image from 'next/image';
+import Link from 'next/link';
 import { cn } from '@/lib/utils';
 
 interface CharacterListProps {
@@ -18,7 +19,8 @@ export function CharacterList({ characters, onSelect }: CharacterListProps) {
       <div className="container mx-auto p-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {characters.map((character) => (
-            <div
+            <Link
+              href={`/characters/${character.id}`}
               key={character.id}
               className={cn(
                 'group relative rounded-lg overflow-hidden cursor-pointer transition-all',
@@ -26,9 +28,13 @@ export function CharacterList({ characters, onSelect }: CharacterListProps) {
                 'hover:ring-2 hover:ring-primary',
                 selectedId === character.id ? 'ring-2 ring-primary' : ''
               )}
-              onClick={() => {
-                setSelectedId(character.id);
-                onSelect?.(character);
+              onClick={(e) => {
+                // Only prevent default if we're in selection mode
+                if (onSelect) {
+                  e.preventDefault();
+                  setSelectedId(character.id);
+                  onSelect(character);
+                }
               }}
             >
               <div className="aspect-square relative">
@@ -62,7 +68,7 @@ export function CharacterList({ characters, onSelect }: CharacterListProps) {
                   })}
                 </p>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>

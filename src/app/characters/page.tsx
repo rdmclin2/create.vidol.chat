@@ -43,10 +43,6 @@ export default function CharactersPage() {
 
       <CharacterList 
         characters={filteredCharacters}
-        onSelect={(character) => {
-          // Handle character selection - you can navigate to edit page or show details
-          console.log('Selected character:', character.name);
-        }}
       />
     </div>
   );

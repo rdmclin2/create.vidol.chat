@@ -8,7 +8,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'AI 角色',
+  title: '角色梦工厂',
   description: '创建和管理你的 AI 角色',
 }
 

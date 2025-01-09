@@ -62,7 +62,7 @@ export default function Sidebar() {
       >
         <Link href="/" className="flex items-center gap-2 transition-colors hover:text-primary">
           <Bot className="h-6 w-6" />
-          {expanded && <span className="font-bold">AI 角色</span>}
+          {expanded && <span className="font-bold">角色梦工厂</span>}
         </Link>
       </div>
       <nav className={cn("flex-1 space-y-2 py-4", expanded ? "px-3" : "px-2")}>
