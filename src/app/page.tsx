@@ -14,7 +14,7 @@ export default function Home() {
           </p>
           <div className="flex justify-center space-x-4">
             <Link
-              href="/create"
+              href="/characters/create"
               className="px-8 py-4 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transform hover:scale-105 transition-all shadow-lg"
             >
               创建新角色
