@@ -18,7 +18,7 @@ export default function CharactersPage() {
     <div className="container mx-auto p-4 space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">AI 角色列表</h1>
-        <Link href="/create">
+        <Link href="characters/create">
           <Button className="flex items-center gap-2">
             <PlusCircle className="w-4 h-4" />
             创建角色

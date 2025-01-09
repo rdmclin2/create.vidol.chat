@@ -26,25 +26,9 @@ const routes = [
     href: "/",
   },
   {
-    label: "角色管理",
+    label: "角色列表",
+    href: "/characters",
     icon: Users,
-    children: [
-      {
-        label: "角色列表",
-        icon: Bot,
-        href: "/characters",
-      },
-      {
-        label: "创建角色",
-        icon: Plus,
-        href: "/create",
-      },
-    ],
-  },
-  {
-    label: "对话",
-    icon: MessageSquare,
-    href: "/chat",
   },
   {
     label: "设置",

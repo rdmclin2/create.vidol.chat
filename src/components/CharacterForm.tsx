@@ -112,7 +112,7 @@ export default function CharacterForm({
             <Input 
               type="text"
               name="name"
-              placeholder="Name your Talkie"
+              placeholder="给你的角色起个名字"
               className="w-[180px] bg-background"
               value={formData.name}
               onChange={handleInputChange}
@@ -121,21 +121,21 @@ export default function CharacterForm({
             <div className="text-xs text-muted-foreground">{formData.name.length}/18</div>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-sm">AI Writer</span>
+            <span className="text-sm">AI 写手</span>
           </div>
         </div>
 
         <div className="space-y-4">
           <div className="flex items-center gap-2">
-            <label className="text-sm font-medium">Gender</label>
+            <label className="text-sm font-medium">性别</label>
             <div className="flex items-center gap-2">
-              {['Male', 'Female', 'Non-Binary'].map((gender) => (
+              {['男', '女', '其他'].map((gender) => (
                 <label key={gender} className="flex items-center gap-1">
                   <input
                     type="radio"
                     name="gender"
-                    value={gender.toLowerCase()}
-                    checked={formData.gender === gender.toLowerCase()}
+                    value={gender === '男' ? 'male' : gender === '女' ? 'female' : 'non-binary'}
+                    checked={formData.gender === (gender === '男' ? 'male' : gender === '女' ? 'female' : 'non-binary')}
                     onChange={handleInputChange}
                     className="w-4 h-4"
                   />
@@ -147,11 +147,11 @@ export default function CharacterForm({
 
           <div className="space-y-2">
             <label className="text-sm font-medium">
-              Intro (Visible to other users)
+              简介（对其他用户可见）
             </label>
             <Textarea
               name="intro"
-              placeholder="Briefly outline Talkie's background, identity, and experiences, highlighting its unique traits and narrative"
+              placeholder="简要描述角色的背景、身份和经历，突出其独特的特征和故事"
               rows={3}
               className="bg-background resize-none"
               value={formData.intro}
@@ -162,10 +162,10 @@ export default function CharacterForm({
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">Opening</label>
+            <label className="text-sm font-medium">开场白</label>
             <Textarea
               name="opening"
-              placeholder="The opening starts the conversation and sets the tone"
+              placeholder="开场白用于开始对话并设定基调"
               rows={2}
               className="bg-background resize-none"
               value={formData.opening}
@@ -176,10 +176,10 @@ export default function CharacterForm({
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">Persona & Prompt (Private)</label>
+            <label className="text-sm font-medium">角色设定（私密）</label>
             <Textarea
               name="persona"
-              placeholder="Provide detailed information about Talkie's chat persona, role, chat style, restrictions, and other relevant characteristics to create a complete character setup."
+              placeholder="提供有关角色的聊天风格、角色、聊天风格、限制和其他相关特征的详细信息，以创建完整的角色设置。"
               rows={6}
               className="font-mono text-sm bg-background resize-none"
               value={formData.persona}
@@ -188,13 +188,13 @@ export default function CharacterForm({
             />
             <div className="text-xs text-muted-foreground text-right">{formData.persona.length}/2000</div>
             <p className="text-xs text-muted-foreground">
-              You can preview and test your talkie in the preview console on the right. Modify until satisfied.
+              你可以在右侧的预览窗口中预览和测试你的角色。根据需要进行修改直到满意为止。
             </p>
           </div>
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium">Image</label>
+          <label className="text-sm font-medium">图片</label>
           <input
             type="file"
             className="hidden"
@@ -217,7 +217,7 @@ export default function CharacterForm({
               <div className="text-center">
                 <Upload className="w-8 h-8 mx-auto text-muted-foreground" />
                 <div className="mt-2">
-                  <span className="text-sm text-primary">Add image to make your talkie more engaging</span>
+                  <span className="text-sm text-primary">添加图片让你的角色更生动</span>
                 </div>
               </div>
             )}

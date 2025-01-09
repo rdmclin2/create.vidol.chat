@@ -23,13 +23,13 @@ export default function CreatePage() {
   return (
     <div className="container mx-auto p-4 min-h-screen bg-background">
       <div className="flex items-center justify-between mb-4">
-        <h1 className="text-lg font-medium">Create Your Talkie</h1>
+        <h1 className="text-lg font-medium">创建你的角色</h1>
         <div className="flex items-center gap-4">
           <Button variant="outline" asChild>
-            <Link href="/characters">Save</Link>
+            <Link href="/characters">保存</Link>
           </Button>
           <Button asChild>
-            <Link href="/characters">Publish</Link>
+            <Link href="/characters">发布</Link>
           </Button>
         </div>
       </div>
