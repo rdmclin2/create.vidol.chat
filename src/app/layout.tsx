@@ -19,17 +19,17 @@ export default function RootLayout({
 }) {
   return (
     <html lang="zh" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body className={`${inter.className} overflow-hidden`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          <div className="relative flex min-h-screen">
+          <div className="relative flex h-screen">
             <Sidebar />
-            <main className="flex-1 transition-[margin] duration-300 lg:ml-[64px] lg:has-[:is(.w-64)]:ml-64">
-              <div className="container py-8">
+            <main className="flex-1">
+              <div className="h-full lg:pl-16 lg:has-[:is(.w-64)]:pl-0">
                 {children}
               </div>
             </main>

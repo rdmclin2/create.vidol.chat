@@ -56,7 +56,7 @@ export default function Sidebar() {
     <div className="flex h-full flex-col gap-4">
       <div
         className={cn(
-          "flex h-14 items-center border-b px-6 transition-all duration-300",
+          "flex h-14 items-center px-6 transition-all duration-300",
           !expanded && "justify-center px-2"
         )}
       >
@@ -138,11 +138,13 @@ export default function Sidebar() {
       </nav>
       <div
         className={cn(
-          "flex h-14 items-center border-t",
-          expanded ? "px-3" : "justify-center px-2"
+          "flex items-center",
+          expanded
+            ? "h-14 px-3"
+            : "flex-col gap-2 py-4 px-2"
         )}
       >
-        <div className="flex items-center gap-2">
+        <div className={cn("flex items-center gap-2", !expanded && "flex-col")}>
           <ThemeToggle />
           <Button
             variant="ghost"
@@ -163,29 +165,28 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* Desktop Sidebar */}
       <aside
         className={cn(
-          "sticky top-0 hidden h-screen border-r bg-background lg:block transition-all duration-300 ease-in-out",
-          expanded ? "w-64" : "w-16"
+          "h-full transition-all duration-300",
+          expanded
+            ? "w-64 border-r border-border/10 bg-background"
+            : "fixed left-0 top-0 z-40 w-16 bg-background/50 backdrop-blur-xl"
         )}
       >
         <SidebarContent />
       </aside>
 
-      {/* Mobile Sidebar */}
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
-        <SheetTrigger asChild className="lg:hidden">
+        <SheetTrigger asChild>
           <Button
             variant="ghost"
             size="icon"
-            className="fixed left-4 top-4 z-40 hover:bg-accent/50 transition-colors duration-200"
+            className="fixed left-4 top-4 z-40 h-8 w-8 rounded-lg lg:hidden"
           >
-            <Menu className="h-5 w-5" />
-            <span className="sr-only">Toggle Menu</span>
+            <Menu className="h-4 w-4" />
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="w-64 p-0">
+        <SheetContent side="left" className="w-64 p-0 bg-background/50 backdrop-blur-xl">
           <SidebarContent />
         </SheetContent>
       </Sheet>
