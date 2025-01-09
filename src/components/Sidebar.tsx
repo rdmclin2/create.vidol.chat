@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { Button } from "./ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { ThemeToggle } from "./theme-toggle";
 
 const routes = [
   {
@@ -55,16 +56,16 @@ export default function Sidebar() {
     <div className="flex h-full flex-col gap-4">
       <div
         className={cn(
-          "flex h-14 items-center border-b px-6",
+          "flex h-14 items-center border-b px-6 transition-all duration-300",
           !expanded && "justify-center px-2"
         )}
       >
-        <Link href="/" className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-2 transition-colors hover:text-primary">
           <Bot className="h-6 w-6" />
           {expanded && <span className="font-bold">AI 角色</span>}
         </Link>
       </div>
-      <nav className={cn("flex-1 space-y-1", expanded ? "px-3" : "px-2")}>
+      <nav className={cn("flex-1 space-y-2 py-4", expanded ? "px-3" : "px-2")}>
         {routes.map((route) => {
           if (route.children) {
             const isGroupOpen = openGroups.includes(route.label);
@@ -73,9 +74,9 @@ export default function Sidebar() {
                 <button
                   onClick={() => toggleGroup(route.label)}
                   className={cn(
-                    "flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm font-medium",
-                    "hover:bg-accent hover:text-accent-foreground",
-                    "transition-colors"
+                    "flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium",
+                    "hover:bg-accent/50 hover:text-accent-foreground",
+                    "transition-all duration-200 ease-in-out"
                   )}
                 >
                   <div className="flex items-center gap-3">
@@ -98,9 +99,9 @@ export default function Sidebar() {
                         key={child.href}
                         href={child.href}
                         className={cn(
-                          "flex items-center gap-3 rounded-lg px-3 py-2 text-sm",
-                          "hover:bg-accent hover:text-accent-foreground",
-                          "transition-colors",
+                          "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm",
+                          "hover:bg-accent/50 hover:text-accent-foreground",
+                          "transition-all duration-200 ease-in-out",
                           pathname === child.href
                             ? "bg-accent text-accent-foreground"
                             : "text-muted-foreground"
@@ -121,9 +122,9 @@ export default function Sidebar() {
               key={route.href}
               href={route.href}
               className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2 text-sm",
-                "hover:bg-accent hover:text-accent-foreground",
-                "transition-colors",
+                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm",
+                "hover:bg-accent/50 hover:text-accent-foreground",
+                "transition-all duration-200 ease-in-out",
                 pathname === route.href
                   ? "bg-accent text-accent-foreground"
                   : "text-muted-foreground"
@@ -138,21 +139,24 @@ export default function Sidebar() {
       <div
         className={cn(
           "flex h-14 items-center border-t",
-          expanded ? "px-3" : "justify-center"
+          expanded ? "px-3" : "justify-center px-2"
         )}
       >
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setExpanded((prev) => !prev)}
-          className="h-8 w-8"
-        >
-          {expanded ? (
-            <ChevronFirst className="h-4 w-4" />
-          ) : (
-            <ChevronLast className="h-4 w-4" />
-          )}
-        </Button>
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setExpanded((prev) => !prev)}
+            className="h-8 w-8 rounded-lg hover:bg-accent/50 transition-colors duration-200"
+          >
+            {expanded ? (
+              <ChevronFirst className="h-4 w-4" />
+            ) : (
+              <ChevronLast className="h-4 w-4" />
+            )}
+          </Button>
+        </div>
       </div>
     </div>
   );
@@ -162,7 +166,7 @@ export default function Sidebar() {
       {/* Desktop Sidebar */}
       <aside
         className={cn(
-          "sticky top-0 hidden h-screen border-r bg-background lg:block transition-all duration-300",
+          "sticky top-0 hidden h-screen border-r bg-background lg:block transition-all duration-300 ease-in-out",
           expanded ? "w-64" : "w-16"
         )}
       >
@@ -175,7 +179,7 @@ export default function Sidebar() {
           <Button
             variant="ghost"
             size="icon"
-            className="fixed left-4 top-4 z-40"
+            className="fixed left-4 top-4 z-40 hover:bg-accent/50 transition-colors duration-200"
           >
             <Menu className="h-5 w-5" />
             <span className="sr-only">Toggle Menu</span>
