@@ -1,9 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
-import Sidebar from '@/components/Sidebar'
-import { Toaster } from "@/components/ui/toaster"
-import { ThemeProvider } from "@/components/theme-provider"
+import { Providers } from "@/components/providers/providers"
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -19,23 +17,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="zh" suppressHydrationWarning>
-      <body className={`${inter.className} overflow-hidden`}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <div className="relative flex h-screen">
-            <Sidebar />
-            <main className="flex-1">
-              <div className="h-full lg:pl-16 lg:has-[:is(.w-64)]:pl-0">
-                {children}
-              </div>
-            </main>
-          </div>
-        </ThemeProvider>
-        <Toaster />
+      <body className={inter.className}>
+        <Providers>
+          {children}
+        </Providers>
       </body>
     </html>
   )
